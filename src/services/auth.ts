@@ -1,10 +1,10 @@
 // Mock Authentication Service
 // TODO: Replace with actual backend API calls
 
-import { 
-  AdminUser, 
-  LoginCredentials, 
-  LoginResponse, 
+import {
+  AdminUser,
+  LoginCredentials,
+  LoginResponse,
   TwoFactorVerification,
   PasswordResetRequest,
   LoginAttempt,
@@ -44,29 +44,42 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Mock users database
 const MOCK_USERS = [
+  // Super Admin - Platform Owner
   {
     id: '1',
-    email: 'admin@homedecor.com',
-    password: 'admin123', // In production, never store plain passwords!
-    name: 'Super Admin',
+    email: 'admin@handmade.com',
+    password: 'admin123',
+    name: 'Platform Admin',
     role: 'super_admin' as const,
+    tenantId: 'handmade-inc',
     avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
     requiresTwoFactor: false,
   },
+
+  // Seller - Shop Owner
   {
     id: '2',
-    email: 'editor@homedecor.com',
-    password: 'editor123',
-    name: 'Content Editor',
-    role: 'editor' as const,
-    requiresTwoFactor: true,
+    email: 'seller@johncrafts.com',
+    password: 'seller123',
+    name: 'John Williams',
+    role: 'seller' as const,
+    tenantId: 'handmade-inc',
+    sellerId: 'SELLER-001',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seller',
+    requiresTwoFactor: false,
   },
+
+  // Artisan - Worker/Maker
   {
     id: '3',
-    email: 'viewer@homedecor.com',
-    password: 'viewer123',
-    name: 'Data Viewer',
-    role: 'viewer' as const,
+    email: 'artisan@alice.com',
+    password: 'artisan123',
+    name: 'Alice Potter',
+    role: 'artisan' as const,
+    tenantId: 'handmade-inc',
+    sellerId: 'SELLER-001',
+    artisanId: 'ARTISAN-001',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=artisan',
     requiresTwoFactor: false,
   },
 ];
@@ -96,12 +109,12 @@ export const authApi = {
 
       // Find user
       const user = MOCK_USERS.find(u => u.email === credentials.email);
-      
+
       if (!user || user.password !== credentials.password) {
         // Track failed attempt
         const currentAttempts = attemptData?.count || 0;
         const newCount = currentAttempts + 1;
-        
+
         if (newCount >= MAX_ATTEMPTS) {
           loginAttempts.set(credentials.email, {
             count: newCount,
@@ -110,12 +123,12 @@ export const authApi = {
           });
           throw new Error('Too many failed attempts. Account locked for 15 minutes.');
         }
-        
+
         loginAttempts.set(credentials.email, {
           count: newCount,
           lastAttempt: Date.now(),
         });
-        
+
         throw new Error('Invalid email or password');
       }
 
@@ -142,7 +155,7 @@ export const authApi = {
         deviceInfo: navigator.userAgent,
         success: true,
       };
-      
+
       const activities = JSON.parse(localStorage.getItem('loginActivities') || '[]');
       activities.unshift(loginActivity);
       localStorage.setItem('loginActivities', JSON.stringify(activities.slice(0, 50)));
@@ -157,7 +170,7 @@ export const authApi = {
       }
 
       const { password, ...userWithoutPassword } = user;
-      
+
       return {
         user: { ...userWithoutPassword, lastLogin: new Date().toISOString(), tenantId },
         token,
@@ -183,10 +196,10 @@ export const authApi = {
     }
 
     const loginResponse: LoginResponse = await response.json();
-    
+
     // Store the token and tenant ID from backend response
     const tenantId = loginResponse.tenantConfig?.id || loginResponse.user.tenantId || 'default';
-    
+
     if (credentials.rememberMe) {
       localStorage.setItem('authToken', loginResponse.token);
       localStorage.setItem('tenantId', tenantId);
@@ -235,7 +248,7 @@ export const authApi = {
 
       const [userId] = atob(token).split(':');
       const user = MOCK_USERS.find(u => u.id === userId);
-      
+
       if (!user) {
         throw new Error('User not found');
       }
@@ -246,9 +259,9 @@ export const authApi = {
 
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     const tenantId = localStorage.getItem('tenantId') || sessionStorage.getItem('tenantId') || 'default';
-    
+
     const response = await fetch(`${API_BASE_URL}/admin/me`, {
-      headers: { 
+      headers: {
         'Authorization': `Bearer ${token}`,
         'X-Tenant-ID': tenantId,
       },
@@ -314,10 +327,10 @@ export const authApi = {
     if (USE_MOCK) {
       const session = activeSessions.get(sessionId);
       if (!session) return false;
-      
+
       const now = new Date();
       const expiresAt = new Date(session.expiresAt);
-      
+
       if (now > expiresAt) {
         activeSessions.delete(sessionId);
         return false;

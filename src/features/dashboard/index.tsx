@@ -1,6 +1,6 @@
 import { LayoutDashboard, BarChart2 } from 'lucide-react';
 import { Module } from '@/lib/module-registry';
-import DashboardPage from './pages/DashboardPage';
+import RoleDashboard from './pages/RoleDashboard';
 
 export const dashboardModule: Module = {
     id: 'dashboard',
@@ -8,11 +8,11 @@ export const dashboardModule: Module = {
     routes: [
         {
             path: 'dashboard',
-            element: <DashboardPage />,
+            element: <RoleDashboard />,
         },
         {
             path: '', // Default route
-            element: <DashboardPage />,
+            element: <RoleDashboard />,
         }
     ],
     navItems: [

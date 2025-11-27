@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Search, Filter, Edit, Trash2 } from 'lucide-react';
 import { ProductForm } from '../components/ProductForm';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
@@ -27,6 +28,8 @@ import { notification } from '@/services/notification';
 import { useNotificationTrigger } from '@/contexts/NotificationContext';
 
 export default function Products() {
+  const navigate = useNavigate();
+  const { tenant } = useParams();
   const notificationTrigger = useNotificationTrigger();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -66,8 +69,9 @@ export default function Products() {
   };
 
   const handleAdd = () => {
-    setEditingProduct(undefined);
-    setFormOpen(true);
+    // Use absolute path to avoid relative routing issues
+    const tenantId = tenant || 'default';
+    navigate(`/${tenantId}/admin/products/create`);
   };
 
   const handleEdit = (product: Product) => {
