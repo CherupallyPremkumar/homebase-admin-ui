@@ -2,9 +2,9 @@ import { lazy, Suspense } from 'react';
 import { usePermissions } from '@/hooks/usePermissions';
 
 // Lazy load dashboards - each dashboard only loads when needed
-const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'));
-const SuperAdminDashboard = lazy(() => import('@/features/dashboard/pages/SuperAdminDashboard'));
-const ArtisanDashboard = lazy(() => import('@/features/dashboard/pages/ArtisanDashboard'));
+const DashboardPage = lazy(() => import('@/features/seller/pages/SellerDashboard'));
+const SuperAdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
+const ArtisanDashboard = lazy(() => import('@/features/artisan/pages/ArtisanDashboard'));
 
 // Loading fallback component
 function DashboardLoader() {

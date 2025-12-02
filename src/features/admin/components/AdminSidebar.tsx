@@ -4,11 +4,11 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 /**
- * SuperAdminSidebar - Platform management navigation
+ * AdminSidebar - Platform management navigation
  * Shows platform-wide features: Sellers, Analytics, Settings
  * Does NOT show product/order management (that's seller-specific)
  */
-export function SuperAdminSidebar() {
+export function AdminSidebar() {
     const { tenant } = useParams<{ tenant: string }>();
 
     const storeName = 'Platform Admin';

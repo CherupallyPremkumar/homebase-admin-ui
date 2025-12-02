@@ -3,9 +3,9 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { useHierarchy } from '@/contexts/SellerContext';
 
 // Lazy load sidebars for code splitting
-const SuperAdminSidebar = lazy(() => import('./sidebars/SuperAdminSidebar').then(m => ({ default: m.SuperAdminSidebar })));
-const SellerSidebar = lazy(() => import('./sidebars/SellerSidebar').then(m => ({ default: m.SellerSidebar })));
-const ArtisanSidebar = lazy(() => import('./sidebars/ArtisanSidebar').then(m => ({ default: m.ArtisanSidebar })));
+const SuperAdminSidebar = lazy(() => import('@/features/admin/components/AdminSidebar').then(m => ({ default: m.AdminSidebar })));
+const SellerSidebar = lazy(() => import('@/features/seller/components/SellerSidebar').then(m => ({ default: m.SellerSidebar })));
+const ArtisanSidebar = lazy(() => import('@/features/artisan/components/ArtisanSidebar').then(m => ({ default: m.ArtisanSidebar })));
 
 // Loading fallback
 function SidebarLoader() {

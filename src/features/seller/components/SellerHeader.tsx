@@ -1,20 +1,20 @@
-import { NotificationsDropdown } from '../NotificationsDropdown';
-import { ProfileDropdown } from '../ProfileDropdown';
-import { Search, Moon, Globe, Grid } from 'lucide-react';
+import { NotificationsDropdown } from '../../layout/components/NotificationsDropdown';
+import { ProfileDropdown } from '../../layout/components/ProfileDropdown';
+import { Search, Moon, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SellerSelector } from '@/components/SellerSelector';
 
 /**
- * SuperAdminHeader - Full-featured header for Super Admins
- * Includes Seller Selector and all platform tools
+ * SellerHeader - Shop-focused header for Sellers
+ * Shows shop name (read-only) and essential tools
  */
-export function SuperAdminHeader() {
+export function SellerHeader() {
     return (
         <header className="sticky top-0 z-20 bg-white border-b border-border shadow-sm">
             <div className="flex items-center justify-between px-6 py-3.5">
                 {/* Left side */}
                 <div className="flex items-center gap-4">
-                    <h2 className="text-lg font-semibold">Platform Admin</h2>
+                    <h2 className="text-lg font-semibold">Shop Manager</h2>
                 </div>
 
                 {/* Right side - Actions */}
@@ -25,19 +25,13 @@ export function SuperAdminHeader() {
                     <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
                         <Moon className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                        <Globe className="h-5 w-5" />
-                    </Button>
 
-                    {/* Seller Selector */}
+                    {/* Shop Name (read-only) */}
                     <div className="mx-2">
                         <SellerSelector />
                     </div>
 
                     <NotificationsDropdown />
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                        <Grid className="h-5 w-5" />
-                    </Button>
                     <div className="h-8 w-px bg-border mx-2"></div>
                     <ProfileDropdown />
                 </div>

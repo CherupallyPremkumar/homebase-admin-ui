@@ -1,7 +1,4 @@
-/**
- * Platform Analytics API
- * Provides platform-wide metrics for Super Admin dashboard
- */
+import { Seller, SellerStatus } from '@/types/seller.types';
 
 // Mock data for platform-wide analytics
 const MOCK_PLATFORM_STATS = {
@@ -15,15 +12,76 @@ const MOCK_PLATFORM_STATS = {
     newSellersThisMonth: 8,
 };
 
-const MOCK_TOP_SELLERS = [
-    { id: 'SELLER-001', name: "John's Crafts", revenue: 12500, orders: 345, products: 78, growth: 15.3 },
-    { id: 'SELLER-002', name: 'Premium Pottery', revenue: 9800, orders: 267, products: 45, growth: 8.7 },
-    { id: 'SELLER-003', name: 'Vintage Vault', revenue: 7200, orders: 198, products: 92, growth: -2.1 },
-    { id: 'SELLER-004', name: 'Artisan Jewelry Co.', revenue: 6800, orders: 156, products: 134, growth: 22.4 },
-    { id: 'SELLER-005', name: 'Handwoven Textiles', revenue: 5900, orders: 143, products: 67, growth: 5.2 },
+const MOCK_SELLERS: Seller[] = [
+    {
+        id: 'SELLER-001',
+        name: "John's Crafts",
+        email: 'john@johnscrafts.com',
+        phone: '+1 (555) 123-4567',
+        address: '123 Craft Lane, Artisan City, AC 12345',
+        status: 'ACTIVE' as SellerStatus,
+        revenue: 12500,
+        orders: 345,
+        products: 78,
+        growth: 15.3,
+        createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+        approvedAt: new Date(Date.now() - 88 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'SELLER-002',
+        name: 'Premium Pottery',
+        email: 'contact@premiumpottery.com',
+        phone: '+1 (555) 234-5678',
+        status: 'ACTIVE' as SellerStatus,
+        revenue: 9800,
+        orders: 267,
+        products: 45,
+        growth: 8.7,
+        createdAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(),
+        approvedAt: new Date(Date.now() - 118 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'SELLER-003',
+        name: 'Vintage Vault',
+        email: 'hello@vintagevault.com',
+        phone: '+1 (555) 345-6789',
+        status: 'PENDING' as SellerStatus,
+        revenue: 0,
+        orders: 0,
+        products: 0,
+        growth: 0,
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'SELLER-004',
+        name: 'Artisan Jewelry Co.',
+        email: 'info@artisanjewelry.com',
+        phone: '+1 (555) 456-7890',
+        status: 'PENDING' as SellerStatus,
+        revenue: 0,
+        orders: 0,
+        products: 0,
+        growth: 0,
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'SELLER-005',
+        name: 'Handwoven Textiles',
+        email: 'sales@handwoventextiles.com',
+        phone: '+1 (555) 567-8901',
+        status: 'SUSPENDED' as SellerStatus,
+        revenue: 5900,
+        orders: 143,
+        products: 67,
+        growth: 5.2,
+        createdAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(),
+        approvedAt: new Date(Date.now() - 178 * 24 * 60 * 60 * 1000).toISOString(),
+        suspendedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        suspensionReason: 'Multiple customer complaints pending investigation',
+    },
 ];
 
-const MOCK_RECENT_ACTIVITIES = [
+const MOCK_RECENT_ACTIVITIES: Activity[] = [
     { id: '1', type: 'new_seller', message: 'New seller "Crafty Creations" joined', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
     { id: '2', type: 'milestone', message: 'Platform crossed $500K revenue milestone', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString() },
     { id: '3', type: 'alert', message: '3 sellers pending approval', timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString() },
@@ -114,7 +172,7 @@ class PlatformApiService {
     async getTopSellers(limit = 10): Promise<TopSeller[]> {
         if (USE_MOCK) {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return MOCK_TOP_SELLERS.slice(0, limit);
+            return MOCK_SELLERS.filter(s => s.status === 'ACTIVE').slice(0, limit) as TopSeller[];
         }
 
         const response = await fetch(`${API_BASE_URL}/api/admin/platform/top-sellers?limit=${limit}`, {
@@ -166,6 +224,145 @@ class PlatformApiService {
         }
 
         return response.json();
+    }
+    /**
+     * Get all sellers
+     */
+    async getSellers(): Promise<Seller[]> {
+        if (USE_MOCK) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return MOCK_SELLERS;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/sellers`, {
+            headers: this.getHeaders(),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch sellers');
+        }
+
+        return response.json();
+    }
+
+    /**
+     * Approve a seller
+     */
+    async approveSeller(sellerId: string): Promise<void> {
+        if (USE_MOCK) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const seller = MOCK_SELLERS.find(s => s.id === sellerId);
+            if (seller) {
+                seller.status = 'ACTIVE';
+                seller.approvedAt = new Date().toISOString();
+            }
+            console.log('Approved seller:', sellerId);
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/sellers/${sellerId}/approve`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to approve seller');
+        }
+    }
+
+    /**
+     * Reject a seller
+     */
+    async rejectSeller(sellerId: string, reason?: string): Promise<void> {
+        if (USE_MOCK) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const seller = MOCK_SELLERS.find(s => s.id === sellerId);
+            if (seller) {
+                seller.status = 'REJECTED';
+                seller.rejectedAt = new Date().toISOString();
+                seller.rejectionReason = reason;
+            }
+            console.log('Rejected seller:', sellerId, reason);
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/sellers/${sellerId}/reject`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getHeaders(),
+            },
+            body: JSON.stringify({ reason }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to reject seller');
+        }
+    }
+
+    /**
+     * Suspend a seller
+     */
+    async suspendSeller(sellerId: string, reason?: string): Promise<void> {
+        if (USE_MOCK) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const seller = MOCK_SELLERS.find(s => s.id === sellerId);
+            if (seller) {
+                seller.status = 'SUSPENDED';
+                seller.suspendedAt = new Date().toISOString();
+                seller.suspensionReason = reason;
+            }
+            console.log('Suspended seller:', sellerId, reason);
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/sellers/${sellerId}/suspend`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getHeaders(),
+            },
+            body: JSON.stringify({ reason }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to suspend seller');
+        }
+    }
+
+    /**
+     * Create a new seller
+     */
+    async createSeller(data: {
+        name: string;
+        email: string;
+        phone?: string;
+        address?: string;
+        bankAccount?: {
+            accountNumber: string;
+            ifscCode: string;
+            accountHolderName?: string;
+        };
+    }): Promise<void> {
+        if (USE_MOCK) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            console.log('Creating seller:', data);
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/sellers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getHeaders(),
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to create seller');
+        }
     }
 }
 

@@ -2,9 +2,9 @@ import { lazy, Suspense } from 'react';
 import { usePermissions } from '@/hooks/usePermissions';
 
 // Lazy load headers for code splitting
-const SuperAdminHeader = lazy(() => import('./headers/SuperAdminHeader').then(m => ({ default: m.SuperAdminHeader })));
-const SellerHeader = lazy(() => import('./headers/SellerHeader').then(m => ({ default: m.SellerHeader })));
-const ArtisanHeader = lazy(() => import('./headers/ArtisanHeader').then(m => ({ default: m.ArtisanHeader })));
+const SuperAdminHeader = lazy(() => import('@/features/admin/components/AdminHeader').then(m => ({ default: m.AdminHeader })));
+const SellerHeader = lazy(() => import('@/features/seller/components/SellerHeader').then(m => ({ default: m.SellerHeader })));
+const ArtisanHeader = lazy(() => import('@/features/artisan/components/ArtisanHeader').then(m => ({ default: m.ArtisanHeader })));
 
 // Loading fallback
 function HeaderLoader() {

@@ -338,31 +338,7 @@ export default function Login() {
               </Button>
             </form>
 
-            {/* Partner Registration Section */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  New to our platform?
-                </span>
-              </div>
-            </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => navigate('/partner/register')}
-            >
-              <Store className="mr-2 h-4 w-4" />
-              Register as Partner
-            </Button>
-
-            <p className="text-xs text-center text-muted-foreground">
-              Start selling your handmade products today and reach thousands of customers
-            </p>
 
           </CardContent>
         </Card>

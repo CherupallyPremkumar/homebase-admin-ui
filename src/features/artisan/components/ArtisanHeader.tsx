@@ -1,4 +1,4 @@
-import { ProfileDropdown } from '../ProfileDropdown';
+import { ProfileDropdown } from '../../layout/components/ProfileDropdown';
 import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

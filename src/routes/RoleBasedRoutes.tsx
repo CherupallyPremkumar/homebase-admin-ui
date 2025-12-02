@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { usePermissions } from '@/hooks/usePermissions';
-import { superAdminRoutes } from './SuperAdminRoutes';
-import { sellerRoutes } from './SellerRoutes';
-import { artisanRoutes } from './ArtisanRoutes';
+import { adminRoutes } from '@/features/admin/routes/adminRoutes';
+import { sellerRoutes } from '@/features/seller/routes/sellerRoutes';
+import { artisanRoutes } from '@/features/artisan/routes/artisanRoutes';
 
 // Loading fallback
 function RouteLoader() {
@@ -28,7 +28,7 @@ export function RoleBasedRoutes() {
     let routes = artisanRoutes; // Default (most restrictive)
 
     if (isSuperAdmin) {
-        routes = superAdminRoutes;
+        routes = adminRoutes;
     } else if (isSeller) {
         routes = sellerRoutes;
     }
