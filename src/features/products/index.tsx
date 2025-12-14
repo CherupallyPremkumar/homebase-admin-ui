@@ -1,6 +1,7 @@
 import { Package } from 'lucide-react';
 import { Module } from '@/lib/module-registry';
 import ProductsPage from './pages/ProductsPage';
+import CreateProductPage from '@/pages/products/CreateProductPage';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 
 export const productsModule: Module = {
@@ -9,7 +10,11 @@ export const productsModule: Module = {
     routes: [
         {
             path: 'products',
-            element: <ProtectedRoute requiredRole={['super_admin', 'editor']}><ProductsPage /></ProtectedRoute>,
+            element: <ProtectedRoute requiredRole={['super_admin', 'seller']}><ProductsPage /></ProtectedRoute>,
+        },
+        {
+            path: 'products/create',
+            element: <ProtectedRoute requiredRole={['super_admin', 'seller']}><CreateProductPage /></ProtectedRoute>,
         }
     ],
     navItems: [

@@ -1,6 +1,12 @@
 // Authentication Types
 
-export type UserRole = 'super_admin' | 'editor' | 'viewer';
+/**
+ * User Role Hierarchy:
+ * - super_admin: Platform owner, can manage all sellers and artisans
+ * - seller: Shop owner, can create products and manage their artisans
+ * - artisan: Maker/worker, can view and update assigned products
+ */
+export type UserRole = 'super_admin' | 'seller' | 'artisan';
 
 export interface AdminUser {
   id: string;
@@ -9,7 +15,11 @@ export interface AdminUser {
   role: UserRole;
   avatarUrl?: string;
   lastLogin?: string;
-  tenantId?: string;
+
+  // Multi-tenant hierarchy
+  tenantId: string;      // Always required
+  sellerId?: string;     // Required for seller and artisan roles
+  artisanId?: string;    // Required for artisan role
 }
 
 export interface TenantConfig {

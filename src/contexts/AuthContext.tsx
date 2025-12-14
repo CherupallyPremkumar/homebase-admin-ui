@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       const userData = await authApi.getCurrentUser();
       setUser(userData);
-      
+
       // Restore tenant information from both storages
       const storedTenantId = localStorage.getItem('tenantId') || sessionStorage.getItem('tenantId');
       if (storedTenantId) {
@@ -109,17 +109,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (userData: AdminUser, token: string, rememberMe = false, tenantConfigData?: TenantConfig) => {
     setUser(userData);
     setLastActivity(Date.now());
-    
+
     // Store tenant information
     const userTenantId = userData.tenantId || 'default';
     setTenantId(userTenantId);
     storeTenant(userTenantId, rememberMe); // Pass rememberMe to tenant storage
-    
+
+    // Store tenantId in localStorage for API headers
+    localStorage.setItem('userTenantId', userTenantId);
+
     if (tenantConfigData) {
       setTenantConfig(tenantConfigData);
       applyTenantTheme(tenantConfigData);
     }
-    
+
     if (rememberMe) {
       localStorage.setItem('authToken', token);
     } else {
@@ -138,10 +141,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTenantId(null);
       setTenantConfig(null);
       clearTenant();
-      
+
       // Redirect to tenant-specific login
-      const loginPath = currentTenant && currentTenant !== 'default' 
-        ? `/${currentTenant}/admin/login` 
+      const loginPath = currentTenant && currentTenant !== 'default'
+        ? `/${currentTenant}/admin/login`
         : '/login';
       navigate(loginPath);
     }
